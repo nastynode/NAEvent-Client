@@ -43,3 +43,22 @@
 .white-image {
   filter: brightness(0%) invert(100%);
 }
+
+.flier {
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.flier-container {
+  max-width: 300px;
+  overflow: hidden;
+}
+
+.grid-item-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

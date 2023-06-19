@@ -1,19 +1,27 @@
-import { useState } from 'react'
-import './App.css'
-import { Navbar } from './components/Navbar'
-import { SampleEvents } from './services/MockData'
-import EventCard from './components/EventCard'
+import './App.css';
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+import { UserView } from './pages/UserView';
+import { ModView } from './pages/ModView';
 
 function App() {
-  const [tempData] = useState(SampleEvents)
+
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <UserView />
+    },
+    {
+      path: "/imamod",
+      element: <ModView />
+    }
+  ]);
 
   return (
     <>
-      <Navbar />
-      <p style={{marginTop: 150}}>Hello world</p>
-      {SampleEvents.map((event, index) => (
-        <EventCard event={event} key={index}/>
-      ))}
+        <RouterProvider router={router} />
     </>
   )
 }
