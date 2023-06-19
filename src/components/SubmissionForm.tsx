@@ -5,6 +5,7 @@ import {v4 as uuidv4} from "uuid";
 import { DatePicker } from "react-date-picker";
 import "react-date-picker/dist/DatePicker.css"
 import { USstates } from "../services/Constants";
+import { Connector } from "../services/MockData";
 
 export function SubmissionForm(){
     const initialState: EventSubmission = {
@@ -32,7 +33,18 @@ export function SubmissionForm(){
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        alert(JSON.stringify(formData));
+        Connector.addPendingEventAsync(formData)
+            .then((res)=>{
+                if(res === 200){
+                    setFormData(initialState);
+                    alert("Event submitted, if approved, it will be added to the site")
+                }
+                else{
+                    throw new Error ("An error has occured, please wait a few minutes and attempt your submission again.")
+                }
+            })
+            .catch((err) => {alert(JSON.stringify(err))})
+        //alert(JSON.stringify(formData));
     }
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +69,7 @@ export function SubmissionForm(){
         <form onSubmit={handleSubmit}>
             <Typography variant="h5">Submit an Event</Typography>
             <Typography variant="subtitle1">All event submissions will be reviewed by a site moderator and, if approved, added to the event list.</Typography>
-            <Grid container spacing={2} bgcolor="lightgray" marginTop={"5px"} marginLeft={"1px"} borderRadius={"5px"} color="black">
+            <Grid container spacing={2} bgcolor="lightgray" marginTop={"5px"} paddingBottom={"10px"} marginLeft={"1px"} borderRadius={"5px"} color="black">
                 <Grid item xs={12}>
                     <TextField 
                         required
@@ -70,8 +82,9 @@ export function SubmissionForm(){
                 </Grid>
                 <Grid item xs={5} style={{display: "flex", flexDirection: "column"}}>
                     <label>Event Start</label>
-                    <DatePicker 
+                    <DatePicker
                         value={formData.startDateTime}
+                        calendarClassName="calendar-drop-down"
                         onChange={(newVal) => {
                             setFormData({
                                 ...formData,
@@ -83,8 +96,9 @@ export function SubmissionForm(){
                 </Grid>
                 <Grid item xs={5} style={{display: "flex", flexDirection: "column"}}>
                     <label>Event End</label>
-                    <DatePicker 
+                    <DatePicker
                         value={formData.endDateTime}
+                        calendarClassName="calendar-drop-down"
                         onChange={(newVal) => {
                             setFormData({
                                 ...formData,
@@ -155,6 +169,34 @@ export function SubmissionForm(){
                         name="postal"
                         onChange={handleLocationChange}
                     />
+                </Grid>
+                <Grid item xs={6}>
+                    <TextField
+                        required
+                        sx={{width: "93%"}} 
+                        label="Submitter's Email"
+                        value={formData.submittedBy}
+                        name="submittedBy"
+                        onChange={handleChange}
+                        type="email" />
+                </Grid>
+                <Grid item xs={6}>
+                    {/**Cosmos is too expensive for file storage, need to set up blob storage :/ */}
+                    <div style={{padding: "5px", border: "1px solid #949392", borderRadius: "5px", width: "92%", minHeight: "40px"}}>
+                        <label>Flier: </label>
+                        <input type="file" />
+                    </div>
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        sx={{width: "98%"}}
+                        label="Event Description"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        multiline
+                        minRows={3}
+                        />
                 </Grid>
             </Grid>
             <div style={{display: 'flex', justifyContent: 'flex-end'}}>
