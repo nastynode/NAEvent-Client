@@ -1,5 +1,5 @@
 import { Grid, TextField } from "@mui/material";
-import { useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { EventSubmission, EventType } from "../models/Event";
 import {v4 as uuidv4} from "uuid";
 
@@ -25,16 +25,32 @@ export function SubmissionForm(){
         additionalNotes: ''
     }
 
-    const [formData, setFormData] = useState(initialState);
+    const [formData, setFormData] = useState<EventSubmission>(initialState);
+
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        alert(formData);
+    }
+
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const {name, value} = event.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value
+        }));
+    }
 
     return(
-        <div>
+        <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <TextField 
                         required
                         defaultValue="eg. Greater Illinois Regional Convention"
                         value={formData.title}
+                        label="Event Name"
+                        name="title"
+                        onChange={handleChange}
                     />
                 </Grid>
                 <Grid item xs={12}>
@@ -50,6 +66,6 @@ export function SubmissionForm(){
                     
                 </Grid>
             </Grid>
-        </div>
+        </form>
     );
 }
